@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primon Plugins</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-funky.css" integrity="sha512-DaIVDRnkFxtKy8+E/8BZLyvfwaJV+ye4rDp7ftqGqiVXu4/pP//gTPVGSBah+3dORYXMDw4guuWQJ4J6e49zQw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+
+.popup {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+        overflow: auto; /* Enable scroll for the popup background if content is too tall */
+    }
+
+    .popup-content {
+        background: rgba(10, 10, 30, 1);
+        padding: 50px;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 10px;
+        padding-top: 40px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 800px;
+        position: relative;
+        animation: slideIn 0.3s ease;
+        max-height: 90vh; /* Limit popup content height */
+        overflow-y: auto; /* Enable scroll for popup content if it's too tall */
+        overflow-x: hidden; /* Prevent horizontal scroll for popup content */
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #ff0080;
+    }
+
+    .copy-btn {
+        position: absolute;
+        top: 10px;
+        right: 50px;
+        background: #ff0080;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .copy-btn:hover {
+        background: #e60073;
+    }
+
+    pre {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 5px;
+        overflow-x: hidden; /* Prevent horizontal scroll for code block */
+        color: white; /* Default color if Prism fails */
+        margin-top: 30px;
+        max-height: 70vh; /* Limit pre height and enable scroll if needed */
+        overflow-y: auto;
+        white-space: pre-wrap; /* Allow line breaks */
+    }
+
+    pre code { /* Important: Prism expects code to be inside <pre><code>...</code></pre> */
+        color: white; /* Ensure code color is white initially, Prism will override */
+        display: block; /* Make sure <code> fills the <pre> container */
+    }
+
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+        from { transform: translateY(-20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+    background: radial-gradient(circle, rgba(10,10,30,1) 0%, rgba(5,5,20,1) 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Üstten hizala */
+    min-height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
+}
+        .container {
+    text-align: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+        .logo {
+            font-size: 32px;
+            font-weight: 600;
+            color: #ff0080;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+            align-items: center;
+            justify-content: center;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(90deg, #2d005f, #ff0080);
+            padding: 10px 20px;
+            border-radius: 25px;
+            width: 400px;
+            transition: all 0.3s ease-in-out;
+        }
+        .sort-btn {
+            background: linear-gradient(90deg, #ff0080, #2d005f);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .sort-btn:hover {
+            transform: scale(1.05);
+        }
+        .search-bar input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: white;
+            font-size: 16px;
+        }
+        .plugins-container {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    width: 100%;
+    perspective: 1000px;
+}
+        .plugin-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            transform-style: preserve-3d;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+            position: relative;
+            transform: rotateY(0deg) rotateX(0deg) translateZ(0);
+            animation: cardEntrance 0.8s ease-in-out forwards;
+        }
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(50px) rotateX(-45deg);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+        }
+        .plugin-card:hover {
+            transform: rotateY(5deg) rotateX(5deg) translateZ(20px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .plugin-card::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: linear-gradient(45deg, #ff008055, #2d005f55);
+            z-index: -1;
+            filter: blur(20px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .plugin-card:hover::after {
+            opacity: 1;
+        }
+
+        .plugin-card h3 {
+            text-shadow: 0 0 10px #ff0080; /* Glow effect */
+        }
+
+        @media (max-width: 768px) {
+    .search-bar {
+        width: 100%; /* Mobilde tam genişlik */
+    }
+
+    .controls {
+        flex-direction: column; /* Mobilde dikey sırala */
+        gap: 10px;
+    }
+
+    .logo {
+        font-size: 24px; /* Mobilde logo boyutunu küçült */
+    }
+
+    h1 {
+        font-size: 24px; /* Mobilde başlık boyutunu küçült */
+    }
+}
+
+/* Telegram Link Styles */
+.telegram-link {
+    display: grid;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    position: relative;
+    width: 40px; /* Initial circle width */
+    height: 40px; /* Initial circle height */
+}
+
+.telegram-circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #ff0080;
+    posation: absolute;
+    align-items: center;
+    justify-content: center;
+    transition: border-radius 0.3s ease, width 0.3s ease, height 0.3s ease; /* Animasyon için gerekli */
+    display: flex; /* Make telegram-circle a flex container */
+}
+
+.telegram-logo {
+    font-size: 20px;
+    transition: opacity 0.3s ease;
+    align-self: center; /* Center logo vertically */
+    justify-self: center; /* Center logo horizontally */
+}
+
+.telegram-text {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%); /* Center text horizontally */
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: opacity 0.3s ease, width 0.3s ease, left 0.3s ease, transform 0.3s ease;
+}
+
+.telegram-link:hover .telegram-circle {
+    border-radius: 25px; /* Rounded rectangle radius */
+    width: 120px; /* Expanded width */
+    height: 40px; /* Keep height same */
+}
+
+.telegram-link:hover .telegram-logo {
+    opacity: 0; /* Fade out logo */
+}
+
+.telegram-link:hover .telegram-text {
+    opacity: 1; /* Fade in text */
+    width: auto; /* Auto width based on content */
+    left: 0; /* Reset left for left-to-right animation */
+    transform: translateX(0); /* Reset transform */
+    font-size: 20px;
+    padding-left: 18px; /* Shift text to right to make space for logo position initially */
+}
+
+
+    </style>
+</head>
+<body>
+<div id="pluginPopup" class="popup">
+    <div class="popup-content">
+        <span id="closePopup" class="close-btn">×</span>
+        <button id="copyCode" class="copy-btn">Copy Code</button>
+        <pre id="pluginCode"><code class="language-javascript"></code></pre>
+    </div>
+</div>
+    <div class="container">
+        <div class="logo">
+            <span>P <small style="color: white; font-size: 16px;">primon-proto</small></span>
+            <a href="https://t.me/phaticusthiccy" target="_blank" class="telegram-link">
+                <div class="telegram-circle">
+                    <i class="fab fa-telegram-plane telegram-logo"></i>
+                </div>
+                <span class="telegram-text">Telegram</span>
+            </a>
+        </div>
+        <h1 style="color: #ccc;">PRIMON PLUGINS</h1>
+        <div class="controls">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search Plugins">
+            </div>
+            <select class="sort-btn" id="sortSelect">
+                <option value="downloads" style="background-color: black;" >Sort by Downloads</option>
+                <option value="name" style="background-color: black;">Sort by Name</option>
+            </select>
+            <button class="sort-btn" id="refreshButton">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
+        <div class="plugins-container" id="pluginList"></div>
+    </div>
+      <script>
+        let plugins = [];
+
+        async function fetchPlugins() {
+            try {
+                const response = await fetch('https://create.thena.workers.dev/pluginMarket');
+                plugins = await response.json();
+                sortPlugins(document.getElementById("sortSelect").value);
+            } catch (error) {
+                console.error('Error fetching plugins:', error);
+            }
+        }
+
+        function sortPlugins(criteria) {
+            switch(criteria) {
+                case 'downloads':
+                    plugins.sort((a, b) => b.downloads - a.downloads);
+                    break;
+                case 'name':
+                    plugins.sort((a, b) => a.pluginName.localeCompare(b.pluginName));
+                    break;
+            }
+            renderPlugins(plugins);
+        }
+
+        function renderPlugins(filteredPlugins) {
+            const container = document.getElementById("pluginList");
+            container.innerHTML = "";
+            filteredPlugins.forEach(plugin => {
+                const pluginElement = document.createElement("div");
+                pluginElement.classList.add("plugin-card");
+                pluginElement.innerHTML = `
+                    <h3>${plugin.pluginName}</h3>
+                    <p>${plugin.description}</p>
+                    <small style="color: #ff0080;">Install: !plinstall ${plugin.pluginId}</small><p>
+                    <small>Downloads: ${plugin.downloads}</small>
+                    <div style="margin-top: 10px; background: rgba(255,255,255,0.2); height: 3px; border-radius: 2px;">
+                        <div style="width: ${Math.min(100, plugin.downloads/100)}%; height: 100%; background: #ff0080; transition: width 2s ease;"></div>
+                    </div>
+                `;
+                container.appendChild(pluginElement);
+
+                pluginElement.addEventListener('click', () => {
+                    const pluginName = pluginElement.querySelector('h3').textContent;
+                    const selectedPlugin = plugins.find(p => p.pluginName === pluginName);
+                    if (selectedPlugin) {
+                        openPopup(selectedPlugin);
+                    }
+                });
+            });
+        }
+
+        document.getElementById("searchInput").addEventListener("input", function(e) {
+            const query = e.target.value.toLowerCase();
+            const filteredPlugins = plugins.filter(plugin =>
+                plugin.pluginName.toLowerCase().includes(query) ||
+                plugin.description.toLowerCase().includes(query) ||
+                plugin.keywords.some(keyword => keyword.toLowerCase().includes(query))
+            );
+            renderPlugins(filteredPlugins);
+        });
+
+        document.getElementById("sortSelect").addEventListener("change", (e) => {
+            sortPlugins(e.target.value);
+        });
+
+        document.getElementById("refreshButton").addEventListener("click", () => {
+            fetchPlugins();
+        });
+
+        fetchPlugins();
+
+        function adjustLayout() {
+    const container = document.querySelector('.container');
+    const pluginsContainer = document.getElementById('pluginList');
+    const searchBar = document.querySelector('.search-bar');
+
+    if (window.innerWidth <= 768) {
+        searchBar.style.width = '100%';
+        pluginsContainer.style.gridTemplateColumns = '1fr';
+    } else {
+        searchBar.style.width = '400px';
+        pluginsContainer.style.gridTemplateColumns = 'repeat(auto-fit, minmax(300px, 1fr))';
+    }
+}
+
+window.addEventListener('resize', adjustLayout);
+
+window.addEventListener('load', adjustLayout);
+
+function openPopup(plugin) {
+    const popup = document.getElementById('pluginPopup');
+    const pluginCodePre = document.getElementById('pluginCode');
+    const pluginCodeElement = pluginCodePre.querySelector('code');
+
+    pluginCodeElement.textContent = plugin.context || "No code available.";
+
+    Prism.highlightElement(pluginCodeElement);
+
+    pluginCodeElement.style.overflowX = 'hidden';
+
+    popup.style.display = 'flex';
+    popup.style.animation = 'fadeIn 0.3s ease';
+}
+
+function closePopup() {
+    const popup = document.getElementById('pluginPopup');
+    popup.style.animation = 'fadeOut 0.3s ease';
+    popup.classList.add('fadeOut');
+
+    popup.addEventListener('animationend', function() {
+        popup.style.display = 'none';
+        popup.classList.remove('fadeOut');
+        popup.removeEventListener('animationend', arguments.callee);
+    });
+}
+
+function copyCodeToClipboard() {
+    const codeElement = document.getElementById('pluginCode').querySelector('code');
+    const code = codeElement.textContent; 
+    navigator.clipboard.writeText(code).then(() => {
+        alert('Code copied to clipboard!');
+    }).catch(() => {
+        alert('Failed to copy code.');
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const popup = document.getElementById('pluginPopup');
+
+    document.getElementById('closePopup').addEventListener('click', closePopup);
+
+    document.getElementById('copyCode').addEventListener('click', copyCodeToClipboard);
+
+    popup.addEventListener('click', function(event) {
+        if (event.target === popup) {
+            closePopup();
+        }
+    });
+});
+    </script>
+</body>
+</html>
