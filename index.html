@@ -21,7 +21,7 @@
         align-items: center;
         z-index: 1000;
         animation: fadeIn 0.3s ease;
-        overflow: auto; /* Enable scroll for the popup background if content is too tall */
+        overflow: auto;
     }
 
     .popup-content {
@@ -32,13 +32,11 @@
         padding-bottom: 10px;
         padding-top: 40px;
         border-radius: 10px;
-        width: 90%;
         max-width: 800px;
         position: relative;
         animation: slideIn 0.3s ease;
-        max-height: 90vh; /* Limit popup content height */
-        overflow-y: auto; /* Enable scroll for popup content if it's too tall */
-        overflow-x: hidden; /* Prevent horizontal scroll for popup content */
+        max-height: 90vh;
+        overflow-y: auto;
     }
 
     .close-btn {
@@ -60,27 +58,127 @@
         padding: 5px 10px;
         border-radius: 5px;
         cursor: pointer;
+        transition: background-color 0.3s ease;
     }
 
     .copy-btn:hover {
         background: #e60073;
     }
 
+    .copy-btn.copied {
+        background: #00c853;
+    }
+
+    .copy-btn.copied::after {
+        content: " Copied!";
+    }
+
+
+    .copy-notification {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #00c853;
+        color: white;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-size: 16px;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0.5s ease;
+        z-index: 1001;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        pointer-events: none;
+        font-weight: 500;
+        box-shadow: 0 4px 20px rgba(238, 130, 238, 0.3);
+    }
+
+    .copy-notification.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .copy-notification::before,
+.copy-notification::after {
+    content: '';
+    position: absolute;
+    top: -8px;
+    width: 40px;
+    height: 20px;
+    background: linear-gradient(45deg, rgba(238, 130, 238, 0.3), transparent);
+    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+    animation: refinedFlame 1.2s ease-in-out infinite;
+    opacity: 0.7;
+}
+
+    .copy-notification::before {
+    left: -15px;
+}
+
+.copy-notification::after {
+    right: -15px;
+    animation-delay: 0.6s;
+}
+
+@keyframes refinedFlame {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.7;
+    }
+    50% {
+        transform: translateY(-6px) scale(1.1);
+        opacity: 0.9;
+    }
+}
+
+.copy-notification.show {
+    animation: border-pulse 2s infinite;
+}
+
+@keyframes border-pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 1px rgba(0, 200, 83, 0.2),
+                    0 4px 20px rgba(0, 200, 83, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.15),
+                    0 6px 25px rgba(0, 200, 83, 0.4);
+    }
+}
+
+    @keyframes professionalFlameAnimation {
+        0% {
+            transform: translateY(0) scaleY(1) rotateZ(0deg);
+            opacity: 0.8;
+        }
+        50% {
+            transform: translateY(-8px) scaleY(1.1) rotateZ(-5deg);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(0) scaleY(1) rotateZ(0deg);
+            opacity: 0.8;
+        }
+    }
+
+
     pre {
         background: rgba(255, 255, 255, 0.1);
         padding: 15px;
         border-radius: 5px;
-        overflow-x: hidden; /* Prevent horizontal scroll for code block */
-        color: white; /* Default color if Prism fails */
+        color: white;
         margin-top: 30px;
-        max-height: 70vh; /* Limit pre height and enable scroll if needed */
+        max-height: 70vh;
         overflow-y: auto;
-        white-space: pre-wrap; /* Allow line breaks */
+        white-space: pre-wrap;
+        display: inline-block;
+        max-width: 100%;
     }
 
-    pre code { /* Important: Prism expects code to be inside <pre><code>...</code></pre> */
-        color: white; /* Ensure code color is white initially, Prism will override */
-        display: block; /* Make sure <code> fills the <pre> container */
+    pre code {
+        color: white;
+        display: block;
     }
 
 
@@ -117,10 +215,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start; /* Üstten hizala */
+    justify-content: flex-start;
     min-height: 100vh;
     padding: 20px;
-    overflow-x: hidden;
+    position: relative; 
 }
         .container {
     text-align: center;
@@ -175,6 +273,7 @@
             background: transparent;
             color: white;
             font-size: 16px;
+            padding-left: 10px;
         }
         .plugins-container {
     margin-top: 20px;
@@ -227,37 +326,36 @@
         }
 
         .plugin-card h3 {
-            text-shadow: 0 0 10px #ff0080; /* Glow effect */
+            text-shadow: 0 0 10px #ff0080;
         }
 
         @media (max-width: 768px) {
     .search-bar {
-        width: 100%; /* Mobilde tam genişlik */
+        width: 100%;
     }
 
     .controls {
-        flex-direction: column; /* Mobilde dikey sırala */
+        flex-direction: column;
         gap: 10px;
     }
 
     .logo {
-        font-size: 24px; /* Mobilde logo boyutunu küçült */
+        font-size: 24px;
     }
 
     h1 {
-        font-size: 24px; /* Mobilde başlık boyutunu küçült */
+        font-size: 24px;
     }
 }
 
-/* Telegram Link Styles */
 .telegram-link {
     display: grid;
     align-items: center;
     text-decoration: none;
     color: white;
     position: relative;
-    width: 40px; /* Initial circle width */
-    height: 40px; /* Initial circle height */
+    width: 40px;
+    height: 40px;
 }
 
 .telegram-circle {
@@ -268,21 +366,21 @@
     posation: absolute;
     align-items: center;
     justify-content: center;
-    transition: border-radius 0.3s ease, width 0.3s ease, height 0.3s ease; /* Animasyon için gerekli */
-    display: flex; /* Make telegram-circle a flex container */
+    transition: border-radius 0.3s ease, width 0.3s ease, height 0.3s ease;
+    display: flex;
 }
 
 .telegram-logo {
     font-size: 20px;
     transition: opacity 0.3s ease;
-    align-self: center; /* Center logo vertically */
-    justify-self: center; /* Center logo horizontally */
+    align-self: center;
+    justify-self: center;
 }
 
 .telegram-text {
     position: absolute;
     left: 50%;
-    transform: translateX(-50%); /* Center text horizontally */
+    transform: translateX(-50%);
     opacity: 0;
     width: 0;
     overflow: hidden;
@@ -291,26 +389,35 @@
 }
 
 .telegram-link:hover .telegram-circle {
-    border-radius: 25px; /* Rounded rectangle radius */
-    width: 120px; /* Expanded width */
-    height: 40px; /* Keep height same */
+    border-radius: 25px;
+    width: 120px;
+    height: 40px;
 }
 
 .telegram-link:hover .telegram-logo {
-    opacity: 0; /* Fade out logo */
+    opacity: 0;
 }
 
 .telegram-link:hover .telegram-text {
-    opacity: 1; /* Fade in text */
-    width: auto; /* Auto width based on content */
-    left: 0; /* Reset left for left-to-right animation */
-    transform: translateX(0); /* Reset transform */
+    opacity: 1;
+    width: auto;
+    left: 0;
+    transform: translateX(0);
     font-size: 20px;
-    padding-left: 18px; /* Shift text to right to make space for logo position initially */
+    padding-left: 18px;
 }
 
 .plugin-card.card-fade-out {
     animation: fadeOutCards 0.3s ease forwards;
+}
+
+.trademark {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ccc;
+    font-size: 12px;
 }
 
 
@@ -321,7 +428,8 @@
     <div class="popup-content">
         <span id="closePopup" class="close-btn">×</span>
         <button id="copyCode" class="copy-btn">Copy Code</button>
-        <pre id="pluginCode"><code class="language-javascript"></code></pre>
+        <div id="copyNotification" class="copy-notification">Code copied!</div>
+        <pre id="pluginCode" style="max-width: fit-content;"><code class="language-javascript"></code></pre>
     </div>
 </div>
     <div class="container">
@@ -338,7 +446,7 @@
         <div class="controls">
             <div class="search-bar">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search Plugins">
+                <input type="text" id="searchInput" placeholder=" Search Plugins">
             </div>
             <select class="sort-btn" id="sortSelect">
                 <option value="downloads" style="background-color: black;" >Sort by Downloads</option>
@@ -349,6 +457,9 @@
             </button>
         </div>
         <div class="plugins-container" id="pluginList"></div>
+    </div>
+    <div class="trademark">
+        © 2024 Primon Plugins. All rights reserved.
     </div>
       <script>
         let plugins = [];
@@ -389,13 +500,27 @@
 
                 container.addEventListener('animationend', function animationEndHandler() {
                     container.innerHTML = "";
-                    renderPluginCards(filteredPlugins, container);
+                    if (filteredPlugins.length === 0) {
+                        const notFoundCard = document.createElement("div");
+                        notFoundCard.classList.add("plugin-card");
+                        notFoundCard.innerHTML = `<h3>No Plugins Found</h3><p>Try adjusting your search or refresh the plugin list.</p>`;
+                        container.appendChild(notFoundCard);
+                    } else {
+                        renderPluginCards(filteredPlugins, container);
+                    }
                     container.removeEventListener('animationend', animationEndHandler);
                     isRendering = false;
                 }, { once: true });
             } else {
                 container.innerHTML = "";
-                renderPluginCards(filteredPlugins, container);
+                if (filteredPlugins.length === 0) {
+                    const notFoundCard = document.createElement("div");
+                    notFoundCard.classList.add("plugin-card");
+                    notFoundCard.innerHTML = `<h3>No Plugins Found</h3><p>Try adjusting your search or refresh the plugin list.</p>`;
+                    container.appendChild(notFoundCard);
+                } else {
+                    renderPluginCards(filteredPlugins, container);
+                }
                 isRendering = false;
             }
         }
@@ -494,8 +619,21 @@ function closePopup() {
 function copyCodeToClipboard() {
     const codeElement = document.getElementById('pluginCode').querySelector('code');
     const code = codeElement.textContent;
+    const copyButton = document.getElementById('copyCode');
+    const notification = document.getElementById('copyNotification');
+
     navigator.clipboard.writeText(code).then(() => {
-        alert('Code copied to clipboard!');
+        copyButton.classList.add('copied');
+        setTimeout(() => {
+            copyButton.classList.remove('copied');
+        }, 2000);
+
+        notification.classList.add('show');
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 2000);
+
+
     }).catch(() => {
         alert('Failed to copy code.');
     });
@@ -514,6 +652,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+
+
     </script>
 </body>
 </html>
