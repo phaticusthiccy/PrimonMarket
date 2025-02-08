@@ -457,7 +457,7 @@ ul:hover li:hover ~ li:before {
             .plugin-card h3 {
                 text-shadow: 0 0 10px #ff0080;
                 display: flex; 
-                align-items: center;
+                align-items: center; 
                 justify-content: center;
             }
             @media (max-width: 768px) {
@@ -723,7 +723,7 @@ ul:hover li:hover ~ li:before {
                         const pluginName = pluginElement.querySelector("h3").textContent.trim();
                         const selectedPlugin = plugins.find((p) => p.pluginName.trim() === pluginName);
                         if (selectedPlugin) {
-                            openPopup(selectedPlugin);
+                            openCodePopup(selectedPlugin);
                         }
                     });
 
@@ -741,7 +741,7 @@ ul:hover li:hover ~ li:before {
                             event.stopPropagation();
                             const videoPath = this.dataset.videoPath;
                             if (videoPath) {
-                                openVideoPopup(videoPath);
+                                openVideoPopup(videoPath, plugin);
                             } else {
                                 alert("No video available for this plugin.");
                             }
@@ -787,11 +787,7 @@ ul:hover li:hover ~ li:before {
             window.addEventListener("load", adjustLayout);
 
             function openPopup(plugin) {
-                if (plugin.videoPath) {
-                    openVideoPopup(plugin.videoPath);
-                } else {
-                    openCodePopup(plugin);
-                }
+                openCodePopup(plugin);
             }
 
             function openCodePopup(plugin) {
@@ -836,10 +832,10 @@ ul:hover li:hover ~ li:before {
             }
 
 
-            function openVideoPopup(videoPath) {
+            function openVideoPopup(videoPath, plugin) {
                 const popup = document.getElementById("pluginPopup");
                 const popupContent = document.querySelector(".popup-content");
-                popupContent.innerHTML = '';
+                popupContent.innerHTML = ''; 
 
                 const closeButton = document.createElement('span');
                 closeButton.id = 'closePopup';
@@ -848,13 +844,43 @@ ul:hover li:hover ~ li:before {
                 closeButton.addEventListener('click', closePopup);
                 popupContent.appendChild(closeButton);
 
-
                 const videoPlayer = document.createElement('video');
                 videoPlayer.src = videoPath;
                 videoPlayer.controls = true;
                 videoPlayer.style.maxWidth = '100%';
                 videoPlayer.style.maxHeight = '80vh';
+
+                videoPlayer.onerror = function() {
+                    popupContent.innerHTML = '';
+                    popupContent.appendChild(closeButton);
+                    openNoVideoPopup(plugin);
+                };
+
                 popupContent.appendChild(videoPlayer);
+
+                popup.style.display = "flex";
+                popup.style.animation = "fadeIn 0.3s ease";
+            }
+
+            function openNoVideoPopup(plugin) {
+                const popup = document.getElementById("pluginPopup");
+                const popupContent = document.querySelector(".popup-content");
+                popupContent.innerHTML = ''; // Clear existing content
+
+                const closeButton = document.createElement('span');
+                closeButton.id = 'closePopup';
+                closeButton.className = 'close-btn';
+                closeButton.textContent = '×';
+                closeButton.addEventListener('click', closePopup);
+                popupContent.appendChild(closeButton);
+
+                const messageDiv = document.createElement('div');
+                messageDiv.style.color = 'white';
+                messageDiv.style.fontSize = '1.2em';
+                messageDiv.style.textAlign = 'center';
+                messageDiv.style.padding = '20px';
+                messageDiv.textContent = 'No Video Preview Available';
+                popupContent.appendChild(messageDiv);
 
                 popup.style.display = "flex";
                 popup.style.animation = "fadeIn 0.3s ease";
