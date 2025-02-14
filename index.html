@@ -649,6 +649,7 @@ ul:hover li:hover ~ li:before {
 
             function populateAuthorsDropdown(plugins) {
                 const authorSelect = document.getElementById("authorSelect");
+                authorSelect.innerHTML = '<option value="all" style="background-color: black;">All Authors</option>';
                 const authors = [...new Set(plugins.map(plugin => plugin.author))];
                 authors.forEach(author => {
                     const option = document.createElement("option");
@@ -689,7 +690,7 @@ ul:hover li:hover ~ li:before {
 
             function applyFiltersAndRender() {
                 let filteredPlugins = [...plugins];
-                filteredPlugins = filterPluginsByAuthor(filteredPlugins, currentAuthorFilter); 
+                filteredPlugins = filterPluginsByAuthor(filteredPlugins, currentAuthorFilter);
                 filteredPlugins = filterPluginsBySearch(filteredPlugins, currentSearchQuery);
                 renderPlugins(filteredPlugins);
             }
