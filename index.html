@@ -571,7 +571,7 @@ ul:hover li:hover ~ li:before {
                 color: white;
                 cursor: pointer;
                 font-size: 1em;
-                margin-left: 5px; 
+                margin-left: 5px;
                 vertical-align: middle;
                 opacity: 0.7;
                 transition: opacity 0.3s ease;
@@ -618,6 +618,9 @@ ul:hover li:hover ~ li:before {
                     <option value="downloads" style="background-color: black;">Sort by Downloads</option>
                     <option value="name" style="background-color: black;">Sort by Name</option>
                 </select>
+                <select class="sort-btn" id="authorSelect">
+                    <option value="all" style="background-color: black;">All Authors</option>
+                </select>
                 <button class="sort-btn" id="refreshButton"><i class="fas fa-sync-alt"></i> Refresh</button>
             </div>
             <div class="plugins-container" id="pluginList"></div>
@@ -629,15 +632,31 @@ ul:hover li:hover ~ li:before {
             let plugins = [];
             let isRendering = false;
             let searchTimeoutId;
+            let currentSearchQuery = "";
+            let currentAuthorFilter = "all";
 
             async function fetchPlugins() {
                 try {
                     const response = await fetch("https://create.thena.workers.dev/pluginMarket");
-                    plugins = await response.json();
+                    const data = await response.json();
+                    plugins = data;
                     sortPlugins(document.getElementById("sortSelect").value);
+                    populateAuthorsDropdown(plugins);
                 } catch (error) {
                     console.error("Error fetching plugins:", error);
                 }
+            }
+
+            function populateAuthorsDropdown(plugins) {
+                const authorSelect = document.getElementById("authorSelect");
+                const authors = [...new Set(plugins.map(plugin => plugin.author))];
+                authors.forEach(author => {
+                    const option = document.createElement("option");
+                    option.value = author;
+                    option.text = author;
+                    option.style.backgroundColor = 'black';
+                    authorSelect.appendChild(option);
+                });
             }
 
             function sortPlugins(criteria) {
@@ -649,8 +668,32 @@ ul:hover li:hover ~ li:before {
                         plugins.sort((a, b) => a.pluginName.localeCompare(b.pluginName));
                         break;
                 }
-                renderPlugins(plugins);
+                applyFiltersAndRender();
             }
+
+            function filterPluginsByAuthor(pluginsToFilter, author) {
+                if (author === "all") {
+                    return pluginsToFilter;
+                }
+                return pluginsToFilter.filter(plugin => plugin.author === author);
+            }
+
+            function filterPluginsBySearch(pluginsToFilter, query) {
+                if (!query) {
+                    return pluginsToFilter;
+                }
+                return pluginsToFilter.filter(
+                    (plugin) => plugin.pluginName.toLowerCase().includes(query) || plugin.description.toLowerCase().includes(query) || plugin.keywords.some((keyword) => keyword.toLowerCase().includes(query))
+                );
+            }
+
+            function applyFiltersAndRender() {
+                let filteredPlugins = [...plugins];
+                filteredPlugins = filterPluginsByAuthor(filteredPlugins, currentAuthorFilter); 
+                filteredPlugins = filterPluginsBySearch(filteredPlugins, currentSearchQuery);
+                renderPlugins(filteredPlugins);
+            }
+
 
             function renderPlugins(filteredPlugins) {
                 if (isRendering) {
@@ -715,6 +758,7 @@ ul:hover li:hover ~ li:before {
                         <div style="margin-top: 10px; background: rgba(255,255,255,0.2); height: 3px; border-radius: 2px; width: -webkit-fill-available;">
                             <div style="width: ${Math.min(100, plugin.downloads / 100)}%; height: 100%; background: #ff0080; transition: width 2s ease;"></div>
                         </div>
+                        <p style="margin-top: 5px;"><small>Author: ${plugin.author}</small></p>
                     `;
                     container.appendChild(pluginElement);
 
@@ -753,19 +797,20 @@ ul:hover li:hover ~ li:before {
             }
 
             document.getElementById("searchInput").addEventListener("input", function (e) {
-                const query = e.target.value.toLowerCase();
+                currentSearchQuery = e.target.value.toLowerCase();
                 clearTimeout(searchTimeoutId);
-                searchTimeoutId = setTimeout(() => {
-                    const filteredPlugins = plugins.filter(
-                        (plugin) => plugin.pluginName.toLowerCase().includes(query) || plugin.description.toLowerCase().includes(query) || plugin.keywords.some((keyword) => keyword.toLowerCase().includes(query))
-                    );
-                    renderPlugins(filteredPlugins);
-                }, 300);
+                searchTimeoutId = setTimeout(applyFiltersAndRender, 300);
             });
 
             document.getElementById("sortSelect").addEventListener("change", (e) => {
                 sortPlugins(e.target.value);
             });
+
+            document.getElementById("authorSelect").addEventListener("change", (e) => {
+                currentAuthorFilter = e.target.value;
+                applyFiltersAndRender();
+            });
+
 
             document.getElementById("refreshButton").addEventListener("click", () => {
                 fetchPlugins();
