@@ -723,7 +723,7 @@
         video.muted = true;
         video.playsInline = true;
         video.autoplay = true;
-        video.src = isMobile ? './src/bg_m.mp4' : './src/bg.mp4';
+        video.src = isMobile ? 'bg_m.mp4' : 'bg.mp4';
         video.addEventListener('loadedmetadata', () => {
           video.play().catch(err => {
             console.error('Autoplay blocked:', err);
@@ -769,18 +769,17 @@
       }
 
       function populateAuthorsDropdown(plugins) {
-        const authorSelect = document.getElementById("authorSelect");
-        authorSelect.innerHTML = ' < option value = "all"
-        style = "background-color: black;" > All Authors < /option>';
-        const authors = [...new Set(plugins.map(plugin => plugin.author))];
-        authors.forEach(author => {
-          const option = document.createElement("option");
-          option.value = author;
-          option.text = author;
-          option.style.backgroundColor = 'black';
-          authorSelect.appendChild(option);
-        });
-      }
+                const authorSelect = document.getElementById("authorSelect");
+                authorSelect.innerHTML = '<option value="all" style="background-color: black;">All Authors</option>';
+                const authors = [...new Set(plugins.map(plugin => plugin.author))];
+                authors.forEach(author => {
+                    const option = document.createElement("option");
+                    option.value = author;
+                    option.text = author;
+                    option.style.backgroundColor = 'black';
+                    authorSelect.appendChild(option);
+                });
+            }
 
       function sortPlugins(criteria) {
         switch (criteria) {
