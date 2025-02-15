@@ -723,7 +723,7 @@
         video.muted = true;
         video.playsInline = true;
         video.autoplay = true;
-        video.src = isMobile ? 'bg_m.mp4' : 'bg.mp4';
+        video.src = isMobile ? './src/bg_m.mp4' : './src/bg.mp4';
         video.addEventListener('loadedmetadata', () => {
           video.play().catch(err => {
             console.error('Autoplay blocked:', err);
