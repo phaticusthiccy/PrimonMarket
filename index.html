@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="overflow-x: hidden">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -44,6 +44,7 @@
       @media screen and (max-width: 600px) {
         .star {
           font-size: 8px;
+          overflow-x: hidden;
         }
       }
 
@@ -740,13 +741,16 @@
           }, 1000);
         });
         video.addEventListener('error', () => {
-          console.error('Video yüklenemedi');
-          showContent();
+          videoOverlay.style.opacity = '0';
+          setTimeout(() => {
+            videoOverlay.remove();
+            showContent();
+          }, 1000);
         });
 
         function showContent() {
           document.body.classList.remove('body-hidden');
-          document.body.style.overflow = 'auto';
+          document.body.style.overflowX = 'hidden';
         }
         videoOverlay.appendChild(video);
         document.body.classList.add('body-hidden');
@@ -1100,6 +1104,7 @@
         let duration = Math.random() * 3;
         e.style.fontSize = 12 + "px";
         e.style.animationDuration = 2 + duration + "s";
+        e.style.overflowX = "hidden";
         setTimeout(function() {
           document.body.removeChild(e);
         }, 5000);
