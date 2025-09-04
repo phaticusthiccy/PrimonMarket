@@ -684,7 +684,7 @@
       <div class="popup-content" style="max-width: 80%;">
         <span id="closePopup" class="close-btn">×</span>
         <button id="copyCode" class="copy-btn">Copy Code</button>
-        <div id="copyNotification" class="copy-notification">Code copied!</div>
+        <div id="copyNotification" class="copy-notification">Code Copied!</div>
         <pre id="pluginCode" style="max-width: fit-content;">
 						<code class="language-javascript"></code>
 					</pre>
@@ -707,7 +707,7 @@
           <span class="telegram-text">Telegram</span>
         </a>
       </div>
-      <div class="hover-underline">
+      <div class="hover-underline" style="cursor: default;">
         <h1 style="color: #ccc;">PRIMON PLUGINS</h1>
       </div>
       <div class="controls">
@@ -991,7 +991,7 @@
         const notification = document.createElement('div');
         notification.id = 'copyNotification';
         notification.className = 'copy-notification';
-        notification.textContent = 'Code copied!';
+        notification.textContent = 'Code Copied!';
         popupContent.appendChild(notification);
         const pre = document.createElement('pre');
         pre.id = 'pluginCode';
@@ -1070,9 +1070,13 @@
         const copyButton = document.getElementById("copyCode");
         const notification = document.getElementById("copyNotification");
         navigator.clipboard.writeText(code).then(() => {
-          copyButton.classList.add("copied");
+		  const originalText = copyButton.textContent;
+		  const ogColor = copyButton.style.backgroundColor
+          copyButton.textContent = "Copied!"
+		  copyButton.style.backgroundColor = "rgb(14 255 0 / 60%)";
           setTimeout(() => {
-            copyButton.classList.remove("copied");
+            copyButton.textContent = originalText
+			copyButton.style.backgroundColor = ogColor;
           }, 2000);
           notification.classList.add("show");
           setTimeout(() => {
@@ -1086,11 +1090,14 @@
       function copyInstallCommand(buttonElement, installCommand) {
 			  navigator.clipboard.writeText(installCommand).then(() => {
 			    const originalText = buttonElement.textContent;
+				const ogColor = buttonElement.style.backgroundColor;
 			    buttonElement.textContent = "Copied";
-			    buttonElement.style.opacity = "0.6";
+			    buttonElement.style.opacity = "1";
+				buttonElement.style.backgroundColor = "rgb(14 255 0 / 60%)";
 			    setTimeout(() => {
 			      buttonElement.textContent = originalText;
 			      buttonElement.style.opacity = "1";
+				  buttonElement.style.backgroundColor = ogColor
 			    }, 1500);
 				}).catch(err => {
 			    console.error("Failed to copy install command: ", err);
@@ -1129,5 +1136,6 @@
     </script>
   </body>
 </html>
+
 
 
