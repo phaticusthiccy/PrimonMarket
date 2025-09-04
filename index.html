@@ -1084,16 +1084,20 @@
       }
 
       function copyInstallCommand(buttonElement, installCommand) {
-        navigator.clipboard.writeText(installCommand).then(() => {
-          buttonElement.classList.add("copied");
-          setTimeout(() => {
-            buttonElement.classList.remove("copied");
-          }, 1500);
-        }).catch(err => {
-          console.error("Failed to copy install command: ", err);
-          alert("Failed to copy install command.");
-        });
-      }
+			  navigator.clipboard.writeText(installCommand).then(() => {
+			    const originalText = buttonElement.textContent;
+			    buttonElement.textContent = "Copied";
+			    buttonElement.style.opacity = "0.6";
+			    setTimeout(() => {
+			      buttonElement.textContent = originalText;
+			      buttonElement.style.opacity = "1";
+			    }, 1500);
+				}).catch(err => {
+			    console.error("Failed to copy install command: ", err);
+			    alert("Failed to copy install command.");
+			  });
+			}
+
       document.addEventListener("DOMContentLoaded", () => {
         const popup = document.getElementById("pluginPopup");
         document.getElementById("closePopup").addEventListener("click", closePopup);
@@ -1125,4 +1129,5 @@
     </script>
   </body>
 </html>
+
 
